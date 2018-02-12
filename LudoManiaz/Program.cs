@@ -10,7 +10,7 @@ namespace LudoManiaz
     {
         static void Main(string[] args)
         {
-
+            //Test
         }
     }
 }
