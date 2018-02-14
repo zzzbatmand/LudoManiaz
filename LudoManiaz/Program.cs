@@ -8,9 +8,50 @@ namespace LudoManiaz
 {
     class Program
     {
+        public enum Colors { RED, GREEN, YELLOW, BLUE };
+
+        static void printChar(char item, char color = 'w')
+        {
+            if (color == 'r')
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            else if (color == 'g')
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else if (color == 'y')
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            }
+            else if (color == 'b')
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+
+            Console.Write(item);
+
+            Console.ResetColor();
+        }
+
         static void Main(string[] args)
         {
-            //Test
+            Board board = new Board();
+
+            board.setPlayPos(Colors.GREEN, 57);
+
+            for(int i = 0; i<board.map.GetLength(0); i++)
+            {
+                for(int j = 0; j<board.map.GetLength(1); j++)
+                {
+                    printChar(board.map[i, j], board.colors[i, j]);
+                }
+                Console.WriteLine();
+            }
         }
     }
 }

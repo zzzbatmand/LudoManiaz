@@ -1,0 +1,37 @@
+﻿Map pos 0 == color home.
+Map pos 1 == buttom left, +1 up since that is the first colors start location.
+Positions goes with the clock from there. 
+Max spaces = 52 (0 - 51)
+
+:: TODO::
+Move some commands arround, so they match better to what they should.
+
+
+
+
+
+
+
+
+
+
+
+
+:: Map ::
+-----------------
+|######   ######|
+|#O##O#   #O##O#|
+|######   ######|
+|######   ######|
+|#O##O#   #O##O#|
+|######   ######|
+|      ###      |
+|      ###      |
+|      ###      |
+|######   ######|
+|#O##O#   #O##O#|
+|######   ######|
+|######   ######|
+|#O##O#   #O##O#|
+|######   ######|
+-----------------
