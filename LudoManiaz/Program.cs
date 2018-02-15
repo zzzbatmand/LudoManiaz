@@ -8,7 +8,7 @@ namespace LudoManiaz
 {
     class Program
     {
-        public enum Colors { RED, GREEN, YELLOW, BLUE };
+        public enum Colors { RED, GREEN, YELLOW, BLUE, WHITE };
 
         static void printChar(char item, char color = 'w')
         {
@@ -42,15 +42,25 @@ namespace LudoManiaz
         {
             Board board = new Board();
 
-            board.setPlayPos(Colors.GREEN, 57);
-
-            for(int i = 0; i<board.map.GetLength(0); i++)
+            while (true)
             {
-                for(int j = 0; j<board.map.GetLength(1); j++)
+                Console.Write("Write number for location: ");
+                int place = Convert.ToInt32(Console.ReadLine());
+
+                board.setPlayPos(Colors.RED, place);
+                //board.setPlayPos(Colors.BLUE, 12);
+
+                for (int i = 0; i < board.map.GetLength(0); i++)
                 {
-                    printChar(board.map[i, j], board.colors[i, j]);
+                    for (int j = 0; j < board.map.GetLength(1); j++)
+                    {
+                        printChar(board.map[i, j], board.colors[i, j]);
+                    }
+                    Console.WriteLine();
                 }
-                Console.WriteLine();
+                Console.ReadLine();
+                board.clearBoard();
+                Console.Clear();
             }
         }
     }

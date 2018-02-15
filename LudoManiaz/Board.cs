@@ -52,7 +52,7 @@ namespace LudoManiaz
 
         // Sets the spawn for the four colors, this is presat and shoul't be changed.
         // 0 = red, 1 = green, 2 = yellow, 3 = blue.
-        public int[,,] spawns = new int[,,]
+        public int[,,] home = new int[,,]
         {
             // Red
             {
@@ -83,6 +83,22 @@ namespace LudoManiaz
                 { 14, 14 }
             }
         };
+
+        /*public int[,,] spawn = new int[,,]
+        {
+            // Red
+            {
+                { 8, 15 }
+            },
+            // Green
+            {
+                { 2, 8 }
+            },
+            // Yellow
+            {
+                { 8,  }
+            }
+        }*/
 
         public int[,] path = new int[,]
         {
@@ -121,9 +137,12 @@ namespace LudoManiaz
             }
         };
 
-        public int[] occupiedSpaces = new int[16]; // Need to store the occupied spaces, don't really care who stands there.
+        public List<int> occupiedSpaces = new List<int> { };
+        //public int[] occupiedSpaces = new int[16]; // Need to store the occupied spaces, don't really care who stands there.
 
-        // Test function
+
+        // Test functions, move these to other files.
+        // This sets a specific color at a specefic position in the possible path... Just try it.
         public void setPlayPos(Program.Colors ePlayer, int pos)
         {
             // Just to make sure it doesn't crash if the value is above 51
@@ -136,6 +155,8 @@ namespace LudoManiaz
             int player = (int)ePlayer;  // Convert Program.Colors to int.
             int x = path[pos, 0], y = path[pos, 1];
             char color = 'w';
+            // Set the item, so it can be removed in the switch.
+            map[x, y] = 'O';
             switch (player)
             {
                 case 0:
@@ -150,11 +171,31 @@ namespace LudoManiaz
                 case 3:
                     color = 'b';
                     break;
+                case 4:
+                    color = 'w';
+                    map[x, y] = ' ';
+                    break;
             }
 
-
-            map[x, y] = 'O';
+            // Set the pre defined color.
             colors[x, y] = color;
+            occupiedSpaces.Add(pos);
         }
+
+        // Remove all items from the board.
+        public void clearBoard()
+        {
+            for (int i = occupiedSpaces.Count - 1; i >= 0; i--)
+            {
+                setPlayPos(Program.Colors.WHITE, occupiedSpaces[i]);
+                occupiedSpaces.RemoveAt(i);
+            }
+
+            // Use later
+            //newPersonList.RemoveAll(p => p.name == "A");
+        }
+
+        // Function to move a pawn out of spawn.
+        //public void startPawn(Player)
     }
 }
