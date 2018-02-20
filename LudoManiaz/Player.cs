@@ -12,8 +12,28 @@ namespace LudoManiaz
     /// </summary>
     class Player
     {
-        private int[] pawnLocations = new int[] { 0, 0, 0, 0 }; // 0 = home
-        private char color = 'w'; // Default is (w)hite
+        Board board = new Board();
+
+        public int[,] pawnLocations = new int[,]
+        {
+            { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }
+        }; // 0 = home
+        
+        public Program.Colors color = Program.Colors.WHITE; // Default is (w)hite
         private int startLocation = 0; // Start location for a new pawn.
+
+        public Player(Program.Colors colorz)
+        {
+            int player = (int)colorz;
+            color = colorz;
+
+            for (int i = 0; i < pawnLocations.GetLength(0); i++)
+            {
+                pawnLocations[i, 0] = board.home[player, i, 0];
+                pawnLocations[i, 1] = board.home[player, i, 1];
+            }
+
+            //pawnLocations = board.home.GetValue(player)
+        }
     }
 }
