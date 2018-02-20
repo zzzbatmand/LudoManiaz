@@ -2,36 +2,45 @@
 Map pos 1 == buttom left, +1 up since that is the first colors start location.
 Positions goes with the clock from there. 
 Max spaces = 52 (0 - 51)
+Detect distance to goal line (spawn - 2 = last touchable spot)
+Remember that red spawn is 0, so 0 - 2 = -2, so if < 0, add like 52 or something.
+	lastBlock = spawn - 2;
+	if (lastBlock < 0):
+		lastBlock += 52
+
+	if (pawnLocation + rollValue >= 52):
+		pawnLocation = (pawnLocation + rollValue - 52)
+		
+
+	if (pawnLocation + rollValue >= lastBlock):
+		goto last block.
+		rollValue -= (lastBlock - rollValue)
+			if (rollValue > 0)
+				Go to goal path.
 
 :: TODO::
+Detect who occupies a space, a pawn wants to goto.
 Move some commands arround, so they match better to what they should.
 
 
 
 
 
-
-
-
-
-
-
-
 :: Map ::
------------------
-|######   ######|
-|#O##O#   #O##O#|
-|######   ######|
-|######   ######|
-|#O##O#   #O##O#|
-|######   ######|
-|      ###      |
-|      ###      |
-|      ###      |
-|######   ######|
-|#O##O#   #O##O#|
-|######   ######|
-|######   ######|
-|#O##O#   #O##O#|
-|######   ######|
------------------
+╔═════╤═══╤═════╗
+║#####│   │#####║
+║#O##O│   │O##O#║
+║#####│   │#####║
+║#####│   │#####║
+║#O##O│   │O##O#║
+╟─────┘   └─────╢
+║      ###      ║
+║      ###      ║
+║      ###      ║
+╟─────┐   ┌─────╢
+║#O##O│   │O##O#║
+║#####│   │#####║
+║#####│   │#####║
+║#O##O│   │O##O#║
+║#####│   │#####║
+╚═════╧═══╧═════╝
