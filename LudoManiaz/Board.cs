@@ -9,6 +9,7 @@ namespace LudoManiaz
     class Board
     {
         Game game = new Game();
+        public int boardSize = 52;
 
         #region Preset arrays
         public char[,] map = new char[,]
@@ -158,14 +159,23 @@ namespace LudoManiaz
             return true;
         }
 
+        private void removePawnAt(int pos)
+        {
+
+            // Remove the pawn from the previous space.
+            setPlayPos(Program.Colors.WHITE, pos);
+            // Remove the pawn from logic.
+            occupiedSpaces.RemoveAll(p => p == pos);
+        }
+
         // Test functions, move these to other files.
         // This sets a specific color at a specefic position in the possible path... Just try it.
-        public void setPlayPos(Program.Colors ePlayer, int pos)
+        public int setPlayPos(Program.Colors ePlayer, int pos)
         {
             // Just to make sure it doesn't crash if the value is above 51
-            while (pos > 51)
+            while (pos > boardSize - 1)
             {
-                pos -= 52;
+                pos -= boardSize;
             }
 
 
@@ -197,6 +207,8 @@ namespace LudoManiaz
             // Set the pre defined color.
             colors[x, y] = color;
             occupiedSpaces.Add(pos);
+
+            return pos;
         }
 
         // Remove all items from the board.
@@ -215,19 +227,26 @@ namespace LudoManiaz
         // Function to move a pawn out of spawn.
         public void startPawn(Player player)
         {
-            bool empty = true;
+            int color = (int)player.color;
+
+            // Check if the spawn is empty before trying to spawn.
+            if (!isSpaceFree(spawn[color]))
+            {
+                Console.WriteLine("Can't spawn any pawns, your spawn is blocked.");
+                return;
+            }
+
+            // Itterates throug each pawn, to see if any of them is in spawn.
             for (int i=0; i<player.pawnLocations.GetLength(0); i++)
             {
-                int color = (int)player.color;
-
                 if (game.int2DTo1D(player.pawnLocations, i).SequenceEqual(game.int3DTo1D(home, color, i)))
                 //if (game.int2DTo1D(player.pawnLocations, i).SequenceEqual(new int[] { 0, 0 }))
                 {
-                    empty = false;
                     occupiedSpaces.Add(spawn[color]);
 
                     player.pawnLocations[i, 0] = path[spawn[color], 0];
                     player.pawnLocations[i, 1] = path[spawn[color], 1];
+                    player.pawnTileLocations[i] = spawn[color];
 
                     Console.WriteLine("Pawn spawned.");
                     int x = home[color, i, 0];
@@ -235,16 +254,72 @@ namespace LudoManiaz
                     map[x, y] = ' ';
 
                     setPlayPos(player.color, spawn[color]);
-
-
-                    break;
+                    
+                    // If a spawn is triggered, then just return to caller.
+                    return;
                 }
             }
-            if (empty)
-            {
-                Console.WriteLine("You can't do that. There is no one in spawn.");
-            }
+
+            // This is only triggere, if there is noone to spawn.
+            Console.WriteLine("You can't do that. There is no one in spawn.");
         }
 
+        /// <summary>
+        /// Move a paticular players pawn
+        /// </summary>
+        /// <param name="player">The player to select</param>
+        /// <param name="nr">The pawn nr. to move</param>
+        /// <param name="ammount">How mutch to move it</param>
+        public void movePawn(Player player, int nr, int ammount)
+        {
+            if (nr > 4)
+            {
+                Console.WriteLine("Something went wrong, the selected pawn is too high: " + nr);
+                // return false
+            }
+
+            bool movePawn = false;
+            int pawnNewLocation = player.pawnTileLocations[nr] + ammount;
+
+            
+            // If the selected pawn, isn't in spawn AND it isn't in goal (0, 0)
+            if (game.int2DTo1D(player.pawnLocations, nr) != game.int3DTo1D(home, (int)player.color, nr) &&
+                game.int2DTo1D(player.pawnLocations, nr) != new int[] { 0, 0 })
+            {
+                // If the pawn position is less than the last position. This reduces checks, if the pawn isn't nearing its end.
+                if (player.pawnTileLocations[nr] <= player.lastBlock)
+                {
+                    // Check if the move will make it pass its last tile.
+                    if ((player.pawnTileLocations[nr] + ammount) <= player.lastBlock)
+                    {
+                        // If the tile is free, then go there.
+                        if (isSpaceFree(pawnNewLocation))
+                            movePawn = true;
+                        else
+                            Console.WriteLine("You can't move that pawn. The space is occupied.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You are at last point");
+                    }
+                }
+                else
+                {
+                    // If the location for the new pawn is free, then move it, otherwise leave it.
+                    if (isSpaceFree(pawnNewLocation))
+                        movePawn = true;
+                    else
+                        Console.WriteLine("You can't move that pawn. The space is occupied.");
+                }
+            }
+
+            if (movePawn)
+            {
+                // Remove the pawn from the previous space.
+                removePawnAt(player.pawnTileLocations[nr]);
+                // Set the pawn at a new position.
+                player.pawnTileLocations[nr] = setPlayPos(player.color, player.pawnTileLocations[nr] + ammount);
+            }
+        }
     }
 }

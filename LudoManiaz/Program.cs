@@ -10,27 +10,29 @@ namespace LudoManiaz
     {
         public enum Colors { RED, GREEN, YELLOW, BLUE, WHITE };
 
-        static void printChar(char item, char color = 'w')
+        static void printChar(char item, char color)
         {
-            if (color == 'r')
+            switch (color)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-            }
-            else if (color == 'g')
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-            }
-            else if (color == 'y')
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-            }
-            else if (color == 'b')
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.White;
+                case 'r':
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+
+                case 'g':
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
+
+                case 'y':
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+
+                case 'b':
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    break;
+
+                default:
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
             }
 
             Console.Write(item);
@@ -55,6 +57,7 @@ namespace LudoManiaz
                 // board.setPlayPos(Colors.GREEN, place);
                 //board.setPlayPos(Colors.BLUE, 12);
                 board.startPawn(player1);
+                board.movePawn(player1, 0, 5);
                 board.startPawn(player2);
 
                 // Draw the map.

@@ -11,10 +11,10 @@ namespace LudoManiaz
         /// <summary>
         /// Converts a 3D int array to a 2D, by using input parameters and preset pos. 0/1
         /// </summary>
-        /// <param name="inp"></param>
-        /// <param name="item0"></param>
-        /// <param name="item1"></param>
-        /// <returns></returns>
+        /// <param name="inp">Input array to convert</param>
+        /// <param name="item0">First item to index by</param>
+        /// <param name="item1">Second item to index by</param>
+        /// <returns>2 dimentional array</returns>
         public int[,] int3DTo2D(int[,,] inp, int item0, int item1)
         {
             int[,] res = new int[,]
@@ -28,9 +28,9 @@ namespace LudoManiaz
         /// <summary>
         /// Converts a 3D int array to a 1D, by using input parameters and preset pos. 0/1
         /// </summary>
-        /// <param name="inp"></param>
-        /// <param name="item0"></param>
-        /// <param name="item1"></param>
+        /// <param name="inp">Input array to convert</param>
+        /// <param name="item0">First item to index by</param>
+        /// <param name="item1">Second item to index by</param>
         /// <returns>1 dimentional array</returns>
         public int[] int3DTo1D(int[,,] inp, int item0, int item1)
         {
@@ -42,6 +42,13 @@ namespace LudoManiaz
 
             return res;
         }
+
+        /// <summary>
+        /// Converts a 3D int array to a 1D, by using input parameters and preset pos. 0/1
+        /// </summary>
+        /// <param name="inp">Input array to convert</param>
+        /// <param name="item">Item to index by</param>
+        /// <returns>1 dimentional array</returns>
         public int[] int2DTo1D(int[,] inp, int item)
         {
             int[] res = new int[]
