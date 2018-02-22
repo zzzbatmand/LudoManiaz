@@ -12,6 +12,7 @@ namespace LudoManiaz
         public int boardSize = 52;
 
         #region Preset arrays
+        // Map and colors for the board.
         public char[,] map = new char[,]
         {
             { '╔', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '╗' },
@@ -32,7 +33,6 @@ namespace LudoManiaz
             { '║', '#', '#', '#', '#', '#', '#', ' ', ' ', ' ', '#', '#', '#', '#', '#', '#', '║' },
             { '╚', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '═', '╝' }
         };
-
         public char[,] colors = new char[,]
         {
             { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
@@ -88,6 +88,7 @@ namespace LudoManiaz
             }
         };
 
+        // Spawn blocks for the colors.
         public int[] spawn = new int[]
         {
             // Red
@@ -159,32 +160,61 @@ namespace LudoManiaz
             return true;
         }
 
-        private void removePawnAt(int pos)
+        private void removePawnAtVal(int value, Program.Colors clear = Program.Colors.WHITE)
         {
-
             // Remove the pawn from the previous space.
-            setPlayPos(Program.Colors.WHITE, pos);
+            setPlayPos(Program.Colors.WHITE, value, (int)clear);
             // Remove the pawn from logic.
-            occupiedSpaces.RemoveAll(p => p == pos);
+            occupiedSpaces.RemoveAll(p => p == value);
         }
 
         // Test functions, move these to other files.
         // This sets a specific color at a specefic position in the possible path... Just try it.
-        public int setPlayPos(Program.Colors ePlayer, int pos)
+        public int setPlayPos(Program.Colors ePlayer, int pos, int playerColor = 4)
         {
-            // Just to make sure it doesn't crash if the value is above 51
-            while (pos > boardSize - 1)
+            int pColor = (int)ePlayer;  // Convert Program.Colors to int.
+            int x = 0, y = 0;
+
+            // If the pawn is on the end line.
+            if (pos > 100)
             {
-                pos -= boardSize;
+                pos -= 100;     // Remove 100 from the result, so i can work with it.
+                // Just to make sure it doesn't crash if the value is above 51
+                while (pos > goal.GetLength(1) - 1)
+                {
+                    pos -= goal.GetLength(1);
+                }
+                if (playerColor != 4)
+                {
+                    x = goal[playerColor, pos, 0];
+                    y = goal[playerColor, pos, 1];
+                }
+                else
+                {
+                    x = goal[pColor, pos, 0];
+                    y = goal[pColor, pos, 1];
+                }
+                
+
+                pos += 100;     // Add 100, so I keep it in the end line.
             }
+            else
+            {
+                // Just to make sure it doesn't crash if the value is above 51
+                while (pos > boardSize - 1)
+                {
+                    pos -= boardSize;
+                }
 
+                x = path[pos, 0];
+                y = path[pos, 1];
+            }
+            
 
-            int player = (int)ePlayer;  // Convert Program.Colors to int.
-            int x = path[pos, 0], y = path[pos, 1];
             char color = 'w';
             // Set the item, so it can be removed in the switch.
             map[x, y] = 'O';
-            switch (player)
+            switch (pColor)
             {
                 case 0:
                     color = 'r';
@@ -272,26 +302,86 @@ namespace LudoManiaz
         /// <param name="ammount">How mutch to move it</param>
         public void movePawn(Player player, int nr, int ammount)
         {
-            if (nr > 4)
+            if (nr > 3)
             {
                 Console.WriteLine("Something went wrong, the selected pawn is too high: " + nr);
-                // return false
+                return;
             }
 
             bool movePawn = false;
             int pawnNewLocation = player.pawnTileLocations[nr] + ammount;
 
-            
+
             // If the selected pawn, isn't in spawn AND it isn't in goal (0, 0)
             if (game.int2DTo1D(player.pawnLocations, nr) != game.int3DTo1D(home, (int)player.color, nr) &&
-                game.int2DTo1D(player.pawnLocations, nr) != new int[] { 0, 0 })
+                player.pawnTileLocations[nr] > -1)
             {
+                // If the pawn is at end
+                if (player.pawnTileLocations[nr] > 100)
+                {
+                    // If the pawn will hit goal.
+                    if ((pawnNewLocation - 100) == goal.GetLength(1) - 1)
+                    {
+                        Console.WriteLine("I hit the goal");
+                        // Remove the item from everywhere
+                        removePawnAtVal(player.pawnTileLocations[nr], player.color);  // Remove the player from board.
+                        player.pawnTileLocations[nr] = -1;              // Pawn is -1 (goal)
+                        player.pawnLocations[nr, 0] = 0;                // Set the x variable.
+                        player.pawnLocations[nr, 1] = 0;                // Set the y variable.
+
+                        bool gameOver = true;
+                        for (int i=0; i<player.pawnTileLocations.Length; i++)
+                        {
+                            // If a pawn hasn't ended. Basically skipped if player wins.
+                            if (player.pawnTileLocations[i] != -1)
+                                gameOver = false;
+                        }
+
+                        if (gameOver)
+                            Console.WriteLine("You win");
+                    }
+
+                    // If the throw, would make the pawn pass the last goal item.
+                    else if (pawnNewLocation > goal.GetLength(1))
+                    {
+                        // Get the distance to move back
+                        int moveBack = (pawnNewLocation + 1) - goal.GetLength(1) - 100;   // Remove the goal checker (100)
+                        // Set the pawn location, to the new location.
+                        pawnNewLocation = goal.GetLength(1) - moveBack - 1 + 100;   // Add the goal checker (100)
+
+                        if (isSpaceFree(pawnNewLocation))
+                            movePawn = true;
+                        else
+                            Console.WriteLine("You can't move that pawn. The space is occupied.");
+                    }
+                    else
+                    {
+                        if (isSpaceFree(pawnNewLocation))
+                            movePawn = true;
+                        else
+                            Console.WriteLine("You can't move that pawn. The space is occupied.");
+                    }
+                }
+
+
                 // If the pawn position is less than the last position. This reduces checks, if the pawn isn't nearing its end.
-                if (player.pawnTileLocations[nr] <= player.lastBlock)
+                else if (player.pawnTileLocations[nr] <= player.lastBlock)
                 {
                     // Check if the move will make it pass its last tile.
-                    if ((player.pawnTileLocations[nr] + ammount) <= player.lastBlock)
+                    if (pawnNewLocation <= player.lastBlock)
                     {
+                        // If the tile is free, then go there.
+                        if (isSpaceFree(pawnNewLocation))
+                            movePawn = true;
+                        else
+                            Console.WriteLine("You can't move that pawn. The space is occupied.");
+                    }
+                    else if (pawnNewLocation > player.lastBlock)
+                    {
+                        Console.WriteLine("I am now attaking");
+                        int remaining = pawnNewLocation - player.lastBlock;
+                        pawnNewLocation = remaining - 1 + 100; // Set the location to the new value for the goal line, -1 to start at 0, then add 100 to tell that it is the goal line.
+
                         // If the tile is free, then go there.
                         if (isSpaceFree(pawnNewLocation))
                             movePawn = true;
@@ -300,7 +390,7 @@ namespace LudoManiaz
                     }
                     else
                     {
-                        Console.WriteLine("You are at last point");
+                        Console.WriteLine("You are at the last point");
                     }
                 }
                 else
@@ -312,13 +402,25 @@ namespace LudoManiaz
                         Console.WriteLine("You can't move that pawn. The space is occupied.");
                 }
             }
+            else if (player.pawnTileLocations[nr] == -2)
+            {
+                Console.WriteLine("The pawn is in spawn");
+            }
+            else
+            {
+                Console.WriteLine("The pawn is in goal");
+            }
 
             if (movePawn)
             {
-                // Remove the pawn from the previous space.
-                removePawnAt(player.pawnTileLocations[nr]);
+                if (pawnNewLocation >= 100)
+                    removePawnAtVal(player.pawnTileLocations[nr], player.color);   // Remove the pawn from the previous space.
+                        // I need this to remove a crash, where white didn't exist in the goal line.
+                else
+                    removePawnAtVal(player.pawnTileLocations[nr]);   // Remove the pawn from the previous space.
+                
                 // Set the pawn at a new position.
-                player.pawnTileLocations[nr] = setPlayPos(player.color, player.pawnTileLocations[nr] + ammount);
+                player.pawnTileLocations[nr] = setPlayPos(player.color, pawnNewLocation);
             }
         }
     }

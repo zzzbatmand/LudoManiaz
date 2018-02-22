@@ -56,7 +56,7 @@ namespace LudoManiaz
                 inp[item, 0],
                 inp[item, 1]
             };
-
+            
             return res;
         }
     }

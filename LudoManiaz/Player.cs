@@ -21,8 +21,8 @@ namespace LudoManiaz
 
         public int[] pawnTileLocations = new int[]
         {
-            0, 0, 0, 0
-        }; 
+            -2, -2, -2, -2
+        }; // -2 = spawn, -1 = end
         
         public Program.Colors color = Program.Colors.WHITE; // Default is (w)hite
         private int startLocation = 0; // Start location for a new pawn.

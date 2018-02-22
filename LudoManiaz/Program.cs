@@ -49,15 +49,16 @@ namespace LudoManiaz
 
             while (true)
             {
-                //Console.Write("Write number for location: ");
-                Console.Write("Just press enter.");
-                //int place = Convert.ToInt32(Console.ReadLine());
-                Console.ReadLine();
+                Console.Write("Write number to move: ");
+                //Console.Write("Just press enter.");
+                int place = 0;
+                int.TryParse(Console.ReadLine(), out place);
+                //Console.ReadLine();
 
                 // board.setPlayPos(Colors.GREEN, place);
                 //board.setPlayPos(Colors.BLUE, 12);
                 board.startPawn(player1);
-                board.movePawn(player1, 0, 5);
+                board.movePawn(player1, place, 4);
                 board.startPawn(player2);
 
                 // Draw the map.
