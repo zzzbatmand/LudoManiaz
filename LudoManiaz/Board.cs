@@ -300,12 +300,13 @@ namespace LudoManiaz
         /// <param name="player">The player to select</param>
         /// <param name="nr">The pawn nr. to move</param>
         /// <param name="ammount">How mutch to move it</param>
-        public void movePawn(Player player, int nr, int ammount)
+        /// <returns>Weather the player has won or not</returns>
+        public bool movePawn(Player player, int nr, int ammount)
         {
             if (nr > 3)
             {
                 Console.WriteLine("Something went wrong, the selected pawn is too high: " + nr);
-                return;
+                return false;
             }
 
             bool movePawn = false;
@@ -338,7 +339,11 @@ namespace LudoManiaz
                         }
 
                         if (gameOver)
+                        {
                             Console.WriteLine("You win");
+                            return true;
+                        }
+                            
                     }
 
                     // If the throw, would make the pawn pass the last goal item.
@@ -422,6 +427,8 @@ namespace LudoManiaz
                 // Set the pawn at a new position.
                 player.pawnTileLocations[nr] = setPlayPos(player.color, pawnNewLocation);
             }
+
+            return false;
         }
     }
 }

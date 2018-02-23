@@ -19,9 +19,9 @@ Remember that red spawn is 0, so 0 - 2 = -2, so if < 0, add like 52 or something
 				Go to goal path.
 
 :: TODO::
-Detect who occupies a space, a pawn wants to goto.
+--Detect who occupies a space, a pawn wants to goto.
 Move some commands arround, so they match better to what they should.
-Pawn pos 100+ = inner board.
+--Pawn pos 100+ = inner board.
 
 
 
